@@ -1,0 +1,9 @@
+sadokierska\olga\dreamtravel\config\SwaggerConfig.class
+sadokierska\olga\dreamtravel\model\Travel.class
+sadokierska\olga\dreamtravel\config\Config.class
+sadokierska\olga\dreamtravel\repository\TravelRepository.class
+sadokierska\olga\dreamtravel\controller\TravelController.class
+sadokierska\olga\dreamtravel\controller\UserController.class
+sadokierska\olga\dreamtravel\model\User.class
+sadokierska\olga\dreamtravel\DreamTravelApplication.class
+sadokierska\olga\dreamtravel\repository\UserRepository.class
