@@ -9,7 +9,7 @@ import sadokierska.olga.dreamtravel.repository.UserRepository;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("api/v1/users")
 @CrossOrigin
 public class UserController {

@@ -5,12 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sadokierska.olga.dreamtravel.model.Travel;
-import sadokierska.olga.dreamtravel.model.User;
 import sadokierska.olga.dreamtravel.repository.TravelRepository;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("api/v1/travels")
 @CrossOrigin
 public class TravelController {
