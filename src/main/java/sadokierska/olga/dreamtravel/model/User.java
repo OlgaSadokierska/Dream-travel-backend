@@ -12,12 +12,11 @@ import org.hibernate.annotations.JdbcTypeCode;
 public class User {
 
     @Id
-    @JdbcTypeCode(java.sql.Types.VARCHAR)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String firstname;
     private String lastname;
     private String email;
-    private String provider;
 
     @ManyToOne
     @JoinColumn(name = "travel_id")

@@ -12,7 +12,7 @@ import java.util.Date;
 public class Travel {
 
     @Id
-    @JdbcTypeCode(java.sql.Types.VARCHAR)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String country;
     private String city;
