@@ -8,20 +8,20 @@ import sadokierska.olga.dreamtravel.model.User;
 import sadokierska.olga.dreamtravel.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/users")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(path="")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> allUssers = userRepository.findAll();
-        return ResponseEntity.ok(allUssers);
-    }
+   /* @GetMapping("/user")
+    public Map<String, Object> user(OAuth2AuthenticationToken authentication) {
+        return authentication.getPrincipal().getAttributes();
+    }*/
 
     @PostMapping(path="")
     public ResponseEntity<User> addNewUser(@RequestBody User user) {

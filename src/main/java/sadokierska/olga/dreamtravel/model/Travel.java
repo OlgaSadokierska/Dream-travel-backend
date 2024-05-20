@@ -1,20 +1,20 @@
 package sadokierska.olga.dreamtravel.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import java.util.Date;
 
 @Entity
+@Data
 @Table(name="travel")
-@Getter
-@Setter
 public class Travel {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String country;
     private String city;
     private Date startDate;
