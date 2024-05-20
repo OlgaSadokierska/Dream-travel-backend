@@ -2,6 +2,7 @@ package sadokierska.olga.dreamtravel.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sadokierska.olga.dreamtravel.model.User;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class OAuth2Controller {
 
     private final UserRepository userRepository;
