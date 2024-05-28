@@ -9,10 +9,7 @@ import sadokierska.olga.dreamtravel.model.User;
 import sadokierska.olga.dreamtravel.repository.TravelRepository;
 import sadokierska.olga.dreamtravel.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -58,5 +55,38 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{userId}")
+    public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable Integer userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
 
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Map<String, String> userInfo = new HashMap<>();
+            userInfo.put("firstname", user.getFirstname());
+            userInfo.put("lastname", user.getLastname());
+            userInfo.put("email", user.getEmail());
+            return ResponseEntity.ok(userInfo);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody Map<String, String> userData) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (userData.containsKey("firstname")) {
+                user.setFirstname(userData.get("firstname"));
+            }
+            if (userData.containsKey("lastname")) {
+                user.setLastname(userData.get("lastname"));
+            }
+
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
