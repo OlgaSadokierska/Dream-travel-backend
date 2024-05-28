@@ -41,7 +41,6 @@ public class TravelController {
         }
 
         try {
-
             newTravel.setUser(user);
 
             travelRepository.save(newTravel);
@@ -68,12 +67,25 @@ public class TravelController {
             travel.setDescription(updatedTravel.getDescription());
             travel.setRate(updatedTravel.getRate());
 
-            // Zapisujemy zmienioną podróż
             travelRepository.save(travel);
 
             return ResponseEntity.status(HttpStatus.OK).body("Podróż została zaktualizowana");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się zaktualizować podróży");
+        }
+    }
+    @DeleteMapping("/{travelId}")
+    public ResponseEntity<String> deleteTravel(@PathVariable Integer travelId) {
+        try {
+
+            if (!travelRepository.existsById(travelId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Podróż o podanym ID nie istnieje");
+            }
+            travelRepository.deleteById(travelId);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Podróż została usunięta");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się usunąć podróży");
         }
     }
     }
