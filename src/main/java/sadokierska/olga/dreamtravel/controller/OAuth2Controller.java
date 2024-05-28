@@ -17,7 +17,6 @@ public class OAuth2Controller {
 
     private final UserRepository userRepository;
 
-
     @GetMapping("")
     public Object sayHello(OAuth2AuthenticationToken authentication) {
         String userEmail = (String) authentication.getPrincipal().getAttributes().get("email");

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name="user")
@@ -19,7 +21,6 @@ public class User {
     private String lastname;
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "travel_id")
-    private Travel travel;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Travel> travels;;
 }
