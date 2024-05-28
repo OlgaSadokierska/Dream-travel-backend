@@ -43,7 +43,7 @@ public class TravelController {
             @RequestBody Map<String, Object> travelData
     ) {
         try {
-            // Sprawdzenie czy wszystkie wymagane pola są dostępne
+
             if (!travelData.containsKey("country") || !travelData.containsKey("city") ||
                     !travelData.containsKey("startDate") || !travelData.containsKey("endDate") ||
                     !travelData.containsKey("description") || !travelData.containsKey("rate")) {
@@ -51,7 +51,7 @@ public class TravelController {
                 return ResponseEntity.badRequest().body(null); // Brak wszystkich wymaganych danych
             }
 
-            // Pobranie danych podróży z przesłanych danych
+
             String country = (String) travelData.get("country");
             String city = (String) travelData.get("city");
             LocalDate startDate = LocalDate.parse((String) travelData.get("startDate"));
@@ -59,7 +59,7 @@ public class TravelController {
             String description = (String) travelData.get("description");
             int rate = (int) travelData.get("rate");
 
-            // Tworzenie nowej podróży
+
             Travel newTravel = new Travel();
             newTravel.setCountry(country);
             newTravel.setCity(city);
@@ -69,11 +69,10 @@ public class TravelController {
             newTravel.setRate(rate);
             travelRepository.save(newTravel);
 
-            // Sprawdzenie czy użytkownik istnieje
             Optional<User> optionalUser = userRepository.findById(userId);
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                // Przypisanie danych użytkownika do nowego użytkownika
+
                 User newUser = new User();
                 newUser.setFirstname(user.getFirstname());
                 newUser.setLastname(user.getLastname());
@@ -83,14 +82,53 @@ public class TravelController {
 
                 return ResponseEntity.ok(newTravel);
             } else {
-                System.err.println("User not found with ID: " + userId); // Komunikat o braku użytkownika
-                return ResponseEntity.notFound().build(); // Użytkownik nie został znaleziony
+                System.err.println("User not found with ID: " + userId);
+                return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
             System.err.println("An error occurred while adding travel for user: " + e.getMessage()); // Komunikat o błędzie
-            return ResponseEntity.badRequest().body(null); // Inny błąd
+            return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @PutMapping("/{travelId}/edit")
+    public ResponseEntity<Travel> editTravel(
+            @PathVariable Integer travelId,
+            @RequestBody Map<String, Object> travelData
+    ) {
+        try {
+            Optional<Travel> optionalTravel = travelRepository.findById(travelId);
+            if (optionalTravel.isPresent()) {
+                Travel travel = optionalTravel.get();
+
+
+                String country = (String) travelData.get("country");
+                String city = (String) travelData.get("city");
+                LocalDate startDate = LocalDate.parse((String) travelData.get("startDate"));
+                LocalDate endDate = LocalDate.parse((String) travelData.get("endDate"));
+                String description = (String) travelData.get("description");
+                int rate = (int) travelData.get("rate");
+
+
+                travel.setCountry(country);
+                travel.setCity(city);
+                travel.setStartDate(startDate);
+                travel.setEndDate(endDate);
+                travel.setDescription(description);
+                travel.setRate(rate);
+
+
+                travelRepository.save(travel);
+
+                return ResponseEntity.ok(travel);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 
 
 }
