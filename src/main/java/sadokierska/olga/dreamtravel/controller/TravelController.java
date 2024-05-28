@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/travels")
@@ -27,11 +28,32 @@ public class TravelController {
     private UserRepository userRepository;
 
 
-    @GetMapping(path="")
+    /*@GetMapping(path="")
     public ResponseEntity<List<Travel>> getAllTravels() {
         List<Travel> allTravels = travelRepository.findAll();
         return ResponseEntity.ok(allTravels);
+    }*/
+    @GetMapping("")
+    public List<Map<String, Object>> getAllTravels() {
+        List<Object[]> results = travelRepository.findAllTravelsInfo();
+        return results.stream()
+                .map(row -> {
+                    Map<String, Object> map = Map.of(
+                            "id", (Integer) row[0],
+                            "country", (String) row[1],
+                            "city", (String) row[2],
+                            "startDate", row[3],
+                            "endDate", row[4],
+                            "description", (String) row[5],
+                            "rate", (int) row[6],
+                            "userId", (Integer) row[7]
+                    );
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
+
+
     @PostMapping("/add/{email}")
     public ResponseEntity<String> addTravel(@PathVariable String email, @RequestBody Travel newTravel) {
         User user = userRepository.findByEmail(email).orElse(null);

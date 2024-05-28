@@ -22,19 +22,15 @@ public class UserController {
     @Autowired
     private TravelRepository travelRepository;
 
-   /* @GetMapping("/user")
-    public Map<String, Object> user(OAuth2AuthenticationToken authentication) {
-        return authentication.getPrincipal().getAttributes();
-    }*/
+
 
     @PostMapping(path="")
     public ResponseEntity<User> addNewUser(@RequestBody User user) {
         User newUser = userRepository.save(user);
         return ResponseEntity.ok(newUser);
     }
-/*
 
-    @GetMapping("/{email}/travels")
+    /**@GetMapping("/{email}/travels")
     public ResponseEntity<List<Travel>> getUserTravelsByEmail(@PathVariable String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
@@ -55,10 +51,11 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
-    @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable Integer userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    }*/
+
+    @GetMapping("/{email}")
+    public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -71,9 +68,10 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Integer userId, @RequestBody Map<String, String> userData) {
-        Optional<User> userOptional = userRepository.findById(userId);
+
+    @PutMapping("/{email}")
+    public ResponseEntity<User> updateUser(@PathVariable String email, @RequestBody Map<String, String> userData) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -89,6 +87,6 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }*/
+    }
 
 }
