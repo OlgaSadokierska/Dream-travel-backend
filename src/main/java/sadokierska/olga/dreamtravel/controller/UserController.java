@@ -2,7 +2,7 @@ package sadokierska.olga.dreamtravel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import sadokierska.olga.dreamtravel.model.Travel;
 import sadokierska.olga.dreamtravel.model.User;
@@ -22,16 +22,15 @@ public class UserController {
     @Autowired
     private TravelRepository travelRepository;
 
-
-
-    @PostMapping(path="")
+    @PostMapping(path = "")
     public ResponseEntity<User> addNewUser(@RequestBody User user) {
         User newUser = userRepository.save(user);
         return ResponseEntity.ok(newUser);
     }
 
-    @GetMapping("/{email}/travels")
-    public ResponseEntity<List<Travel>> getUserTravelsByEmail(@PathVariable String email) {
+    @GetMapping("/me/travels")
+    public ResponseEntity<List<Travel>> getUserTravelsByToken(OAuth2AuthenticationToken authentication) {
+        String email = (String) authentication.getPrincipal().getAttributes().get("email");
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
@@ -43,8 +42,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable String email) {
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, String>> getUserInfo(OAuth2AuthenticationToken authentication) {
+        String email = (String) authentication.getPrincipal().getAttributes().get("email");
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
