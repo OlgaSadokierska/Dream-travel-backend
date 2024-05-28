@@ -32,6 +32,7 @@ public class UserController {
         User newUser = userRepository.save(user);
         return ResponseEntity.ok(newUser);
     }
+/*
 
     @GetMapping("/{email}/travels")
     public ResponseEntity<List<Travel>> getUserTravelsByEmail(@PathVariable String email) {
@@ -88,5 +89,6 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
+
 }

@@ -1,6 +1,7 @@
 package sadokierska.olga.dreamtravel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,107 +32,53 @@ public class TravelController {
         List<Travel> allTravels = travelRepository.findAll();
         return ResponseEntity.ok(allTravels);
     }
-    @PostMapping(path="")
-    public ResponseEntity<Travel> addNewTravel(@RequestBody Travel travel) {
-        Travel newTravel = travelRepository.save(travel);
-        return ResponseEntity.ok(newTravel);
-    }
+    @PostMapping("/add/{email}")
+    public ResponseEntity<String> addTravel(@PathVariable String email, @RequestBody Travel newTravel) {
+        User user = userRepository.findByEmail(email).orElse(null);
 
-    @PostMapping("/{userId}/add")
-    public ResponseEntity<Travel> addTravelForUser(
-            @PathVariable Integer userId,
-            @RequestBody Map<String, Object> travelData
-    ) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Użytkownik o podanym adresie e-mail nie istnieje");
+        }
+
         try {
 
-            if (!travelData.containsKey("country") || !travelData.containsKey("city") ||
-                    !travelData.containsKey("startDate") || !travelData.containsKey("endDate") ||
-                    !travelData.containsKey("description") || !travelData.containsKey("rate")) {
-                System.err.println("Missing required fields in travel data"); // Komunikat o braku wymaganych danych
-                return ResponseEntity.badRequest().body(null); // Brak wszystkich wymaganych danych
-            }
+            newTravel.setUser(user);
 
-
-            String country = (String) travelData.get("country");
-            String city = (String) travelData.get("city");
-            LocalDate startDate = LocalDate.parse((String) travelData.get("startDate"));
-            LocalDate endDate = LocalDate.parse((String) travelData.get("endDate"));
-            String description = (String) travelData.get("description");
-            int rate = (int) travelData.get("rate");
-
-
-            Travel newTravel = new Travel();
-            newTravel.setCountry(country);
-            newTravel.setCity(city);
-            newTravel.setStartDate(startDate);
-            newTravel.setEndDate(endDate);
-            newTravel.setDescription(description);
-            newTravel.setRate(rate);
             travelRepository.save(newTravel);
 
-            Optional<User> optionalUser = userRepository.findById(userId);
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-
-                User newUser = new User();
-                newUser.setFirstname(user.getFirstname());
-                newUser.setLastname(user.getLastname());
-                newUser.setEmail(user.getEmail());
-                newUser.setTravel(newTravel);
-                userRepository.save(newUser);
-
-                return ResponseEntity.ok(newTravel);
-            } else {
-                System.err.println("User not found with ID: " + userId);
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.status(HttpStatus.CREATED).body("Podróż dodana pomyślnie");
         } catch (Exception e) {
-            System.err.println("An error occurred while adding travel for user: " + e.getMessage()); // Komunikat o błędzie
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się dodać podróży");
         }
     }
-
-    @PutMapping("/{travelId}/edit")
-    public ResponseEntity<Travel> editTravel(
-            @PathVariable Integer travelId,
-            @RequestBody Map<String, Object> travelData
-    ) {
+    @PutMapping("/{travelId}")
+    public ResponseEntity<String> updateTravel(@PathVariable Integer travelId, @RequestBody Travel updatedTravel) {
         try {
-            Optional<Travel> optionalTravel = travelRepository.findById(travelId);
-            if (optionalTravel.isPresent()) {
-                Travel travel = optionalTravel.get();
 
-
-                String country = (String) travelData.get("country");
-                String city = (String) travelData.get("city");
-                LocalDate startDate = LocalDate.parse((String) travelData.get("startDate"));
-                LocalDate endDate = LocalDate.parse((String) travelData.get("endDate"));
-                String description = (String) travelData.get("description");
-                int rate = (int) travelData.get("rate");
-
-
-                travel.setCountry(country);
-                travel.setCity(city);
-                travel.setStartDate(startDate);
-                travel.setEndDate(endDate);
-                travel.setDescription(description);
-                travel.setRate(rate);
-
-
-                travelRepository.save(travel);
-
-                return ResponseEntity.ok(travel);
-            } else {
-                return ResponseEntity.notFound().build();
+            if (!travelRepository.existsById(travelId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Podróż o podanym ID nie istnieje");
             }
+
+            Travel travel = travelRepository.findById(travelId).get();
+
+            travel.setCountry(updatedTravel.getCountry());
+            travel.setCity(updatedTravel.getCity());
+            travel.setStartDate(updatedTravel.getStartDate());
+            travel.setEndDate(updatedTravel.getEndDate());
+            travel.setDescription(updatedTravel.getDescription());
+            travel.setRate(updatedTravel.getRate());
+
+            // Zapisujemy zmienioną podróż
+            travelRepository.save(travel);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Podróż została zaktualizowana");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się zaktualizować podróży");
         }
+    }
     }
 
 
-
-}
 
 
 

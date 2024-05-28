@@ -6,6 +6,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,4 +23,11 @@ public class Travel {
     private LocalDate endDate;
     private String description;
     private int rate;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
 }
