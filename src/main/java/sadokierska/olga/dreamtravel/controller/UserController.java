@@ -30,28 +30,18 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
-    /**@GetMapping("/{email}/travels")
+    @GetMapping("/{email}/travels")
     public ResponseEntity<List<Travel>> getUserTravelsByEmail(@PathVariable String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            List<Travel> userTravels = new ArrayList<>();
-
-            Integer travelId = user.getTravel().getId();
-
-            Optional<Travel> travelOptional = travelRepository.findById(travelId);
-
-            if (travelOptional.isPresent()) {
-                userTravels.add(travelOptional.get());
-                return ResponseEntity.ok(userTravels);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            List<Travel> userTravels = user.getTravels();
+            return ResponseEntity.ok(userTravels);
         } else {
             return ResponseEntity.notFound().build();
         }
-    }*/
+    }
 
     @GetMapping("/{email}")
     public ResponseEntity<Map<String, String>> getUserInfo(@PathVariable String email) {
@@ -88,5 +78,4 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
