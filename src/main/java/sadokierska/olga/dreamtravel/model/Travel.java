@@ -1,16 +1,14 @@
 package sadokierska.olga.dreamtravel.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
-@Table(name="travel")
+@Table(name = "travel")
 public class Travel {
 
     @Id
@@ -24,10 +22,8 @@ public class Travel {
     private String description;
     private int rate;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
-
-
 }

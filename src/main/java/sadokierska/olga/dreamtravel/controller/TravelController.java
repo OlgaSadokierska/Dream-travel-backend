@@ -9,6 +9,7 @@ import sadokierska.olga.dreamtravel.model.Travel;
 import sadokierska.olga.dreamtravel.model.User;
 import sadokierska.olga.dreamtravel.repository.TravelRepository;
 import sadokierska.olga.dreamtravel.repository.UserRepository;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -27,12 +28,13 @@ public class TravelController {
     @Autowired
     private UserRepository userRepository;
 
-
-    /*@GetMapping(path="")
-    public ResponseEntity<List<Travel>> getAllTravels() {
-        List<Travel> allTravels = travelRepository.findAll();
-        return ResponseEntity.ok(allTravels);
-    }*/
+    /*
+     * @GetMapping(path="")
+     * public ResponseEntity<List<Travel>> getAllTravels() {
+     * List<Travel> allTravels = travelRepository.findAll();
+     * return ResponseEntity.ok(allTravels);
+     * }
+     */
     @GetMapping("")
     public List<Map<String, Object>> getAllTravels() {
         List<Object[]> results = travelRepository.findAllTravelsInfo();
@@ -46,32 +48,31 @@ public class TravelController {
                             "endDate", row[4],
                             "description", (String) row[5],
                             "rate", (int) row[6],
-                            "userId", (Integer) row[7]
-                    );
+                            "userId", (Integer) row[7]);
                     return map;
                 })
                 .collect(Collectors.toList());
     }
 
-
-    @PostMapping("/add/{email}")
-    public ResponseEntity<String> addTravel(@PathVariable String email, @RequestBody Travel newTravel) {
+    @PostMapping("/add")
+    public ResponseEntity<String> addTravel(OAuth2AuthenticationToken authentication, @RequestBody Travel newTravel) {
+        String email = (String) authentication.getPrincipal().getAttributes().get("email");
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Użytkownik o podanym adresie e-mail nie istnieje");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Użytkownik o podanym adresie e-mail nie istnieje");
         }
 
         try {
             newTravel.setUser(user);
-
             travelRepository.save(newTravel);
-
             return ResponseEntity.status(HttpStatus.CREATED).body("Podróż dodana pomyślnie");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się dodać podróży");
         }
     }
+
     @PutMapping("/{travelId}")
     public ResponseEntity<String> updateTravel(@PathVariable Integer travelId, @RequestBody Travel updatedTravel) {
         try {
@@ -96,6 +97,7 @@ public class TravelController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się zaktualizować podróży");
         }
     }
+
     @DeleteMapping("/{travelId}")
     public ResponseEntity<String> deleteTravel(@PathVariable Integer travelId) {
         try {
@@ -110,9 +112,4 @@ public class TravelController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Nie udało się usunąć podróży");
         }
     }
-    }
-
-
-
-
-
+}
